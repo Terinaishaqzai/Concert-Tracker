@@ -1,0 +1,56 @@
+<html>
+<body>
+
+<h2>Concert Tracker</h2>
+
+<form>
+  <label for="fname">Zipcode:</label>
+  <input type="text" id="fname" name="fname"><br>
+ 	<br> <br>
+  <input type="button" value="Quick View" onclick="quickView()">
+</form>
+
+
+<div id = "quickView" style= "display:none;">
+<h2> Available Concerts: </h2>
+<table>
+<tr>
+    <th>Concert</th>
+    <th>Venue</th>
+    <th>Price Range</th>
+    <th>Date</th>
+    <th>Seat Rating</th>
+  </tr>
+  <tr>
+    <td>Concert 1</td>
+    <td>MSG</td>
+    <td>$10-100</td>
+    <td>11/26/26</td>
+    <td>Average</td>
+  </tr>
+  <tr>
+    <td>Concert 2</td>
+    <td>Staples Center</td>
+    <td>$70-150</td>
+    <td>11/27/26</td>
+    <td>Great</td>
+  </tr>
+</table>
+</div>
+<script>
+
+function quickView() {
+const table = document.getElementById("quickView");
+	if (table.style.display === "block") {
+		table.style.display = "none";
+	} else {
+	table.style.display = "block" }
+}
+
+</script>
+</body>
+</html>
+
+
+
+
