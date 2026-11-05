@@ -1,7 +1,7 @@
 <!--
 This file is the Concert Tracker main page (Quick View of Concert Tickets).
 Sprint 1 MVP: HTML/CSS with sample concert data, no API connection.
-The only script is the Quick View table toggle.
+The only script switches between card view and the Quick View table.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -12,7 +12,7 @@ The only script is the Quick View table toggle.
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
- 
+
     <!--********** Left Sidebar: Logo + Past Chats/Events **********-->
     <aside class="sidebar">
       <div class="logo">
@@ -25,10 +25,10 @@ The only script is the Quick View table toggle.
         <li><a href="#">Jazz concerts</a></li>
       </ul>
     </aside>
- 
+
     <!--********** Main Content **********-->
     <main class="main">
- 
+
       <!-- Top Bar: Search + User Info -->
       <header class="topbar">
         <form class="search">
@@ -40,14 +40,14 @@ The only script is the Quick View table toggle.
           <span>Log in</span>
         </a>
       </header>
- 
+
       <!-- Zipcode + Quick View toggle (teammate's form) -->
       <form class="zipform">
         <label for="fname">Zipcode:</label>
         <input type="text" id="fname" name="fname">
         <input type="button" value="Quick View" onclick="quickView()">
       </form>
- 
+
       <!-- Quick View table (teammate's table, hidden until Quick View is clicked) -->
       <div id="quickView" style="display:none;">
         <h2>Available Concerts:</h2>
@@ -96,10 +96,11 @@ The only script is the Quick View table toggle.
           </tr>
         </table>
       </div>
- 
+
+      <!-- Card view (hidden while the Quick View table is showing) -->
+      <div id="cardView">
       <h2>Upcoming Concerts</h2>
- 
-      <!-- Concert List (Quick View) -->
+
       <!-- Concert List -->
       <ul class="boxlist">
         <!--********** Element **********-->
@@ -258,8 +259,9 @@ The only script is the Quick View table toggle.
           </div>
         </li>
       </ul>
+      </div>
     </main>
- 
+
     <!--********** Right Panel: Concert Assistant (UI only, Sprint 2) **********-->
     <aside class="chat">
       <h3>Concert Assistant</h3>
@@ -272,18 +274,20 @@ The only script is the Quick View table toggle.
       <div class="help">?</div>
       <input type="text" placeholder="Assistant coming soon" disabled>
     </aside>
- 
+
     <!-- Teammate's Quick View toggle -->
     <script>
       function quickView() {
         const table = document.getElementById("quickView");
+        const cards = document.getElementById("cardView");
         if (table.style.display === "block") {
           table.style.display = "none";
+          cards.style.display = "block";
         } else {
           table.style.display = "block";
+          cards.style.display = "none";
         }
       }
     </script>
   </body>
 </html>
- 

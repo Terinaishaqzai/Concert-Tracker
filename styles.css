@@ -283,3 +283,73 @@ body {
     font-weight: normal;
     font-style: italic;
 }
+/********** Fit everything on one screen **********/
+body {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main {
+    padding: 10px 20px;
+
+    h2 {
+        margin: 10px 0px;
+        font-size: 22px;
+    }
+}
+
+.zipform {
+    margin-top: 8px;
+}
+
+.boxlist {
+    margin: 0px;
+
+    li {
+        margin-bottom: 8px;
+        padding: 6px;
+        gap: 12px;
+
+        div p {
+            font-size: 16px;
+            margin: 2px 0px;
+        }
+
+        .image {
+            width: 60px;
+            height: 60px;
+        }
+
+        .info .name {
+            font-size: 18px;
+        }
+
+        .info .location {
+            font-size: 14px;
+        }
+
+        .seat p {
+            font-size: 12px;
+            margin: 0px;
+        }
+
+        .date p {
+            margin: 0px;
+        }
+
+        .date .day {
+            font-size: 20px;
+        }
+
+        .buy a {
+            padding: 6px 12px;
+        }
+    }
+}
+
+.chat .help {
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    font-size: 28px;
+}
