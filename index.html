@@ -1,0 +1,289 @@
+<!--
+This file is the Concert Tracker main page (Quick View of Concert Tickets).
+Sprint 1 MVP: HTML/CSS with sample concert data, no API connection.
+The only script is the Quick View table toggle.
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concert Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+ 
+    <!--********** Left Sidebar: Logo + Past Chats/Events **********-->
+    <aside class="sidebar">
+      <div class="logo">
+        <p>&#9835; Concert Tracker</p>
+      </div>
+      <h3>Past Chats / Events</h3>
+      <ul class="pastlist">
+        <li><a href="#">Drake tickets</a></li>
+        <li><a href="#">Harry Styles</a></li>
+        <li><a href="#">Jazz concerts</a></li>
+      </ul>
+    </aside>
+ 
+    <!--********** Main Content **********-->
+    <main class="main">
+ 
+      <!-- Top Bar: Search + User Info -->
+      <header class="topbar">
+        <form class="search">
+          <span>&#128269;</span>
+          <input type="text" placeholder="Search concerts, artists, or cities">
+        </form>
+        <a class="user" href="#">
+          <span class="avatar">&#128100;</span>
+          <span>Log in</span>
+        </a>
+      </header>
+ 
+      <!-- Zipcode + Quick View toggle (teammate's form) -->
+      <form class="zipform">
+        <label for="fname">Zipcode:</label>
+        <input type="text" id="fname" name="fname">
+        <input type="button" value="Quick View" onclick="quickView()">
+      </form>
+ 
+      <!-- Quick View table (teammate's table, hidden until Quick View is clicked) -->
+      <div id="quickView" style="display:none;">
+        <h2>Available Concerts:</h2>
+        <table>
+          <tr>
+            <th>Concert</th>
+            <th>Venue</th>
+            <th>Price Range</th>
+            <th>Date</th>
+            <th>Seat Rating</th>
+          </tr>
+          <tr>
+            <td>Cool Concert</td>
+            <td>President's Mall</td>
+            <td>$80-500</td>
+            <td>10/31/26</td>
+            <td>Great</td>
+          </tr>
+          <tr>
+            <td>Concert 1</td>
+            <td>MSG</td>
+            <td>$10-100</td>
+            <td>11/26/26</td>
+            <td>Average</td>
+          </tr>
+          <tr>
+            <td>Boring Concert</td>
+            <td>Center of the smARTs</td>
+            <td>$10-40</td>
+            <td>11/26/26</td>
+            <td>Average</td>
+          </tr>
+          <tr>
+            <td>Concert 2</td>
+            <td>Staples Center</td>
+            <td>$70-150</td>
+            <td>11/27/26</td>
+            <td>Great</td>
+          </tr>
+          <tr>
+            <td>Fancy Concert</td>
+            <td>High Life Orchards</td>
+            <td>$800</td>
+            <td>12/12/26</td>
+            <td>Great</td>
+          </tr>
+        </table>
+      </div>
+ 
+      <h2>Upcoming Concerts</h2>
+ 
+      <!-- Concert List (Quick View) -->
+      <!-- Concert List -->
+      <ul class="boxlist">
+        <!--********** Element **********-->
+        <li>
+          <!-- Image -->
+          <div class="image">
+            <img src="https://placehold.co/90x90?text=Concert" alt="Cool Concert">
+          </div>
+          <!-- Name + Location -->
+          <div class="info">
+            <p class="name">Cool Concert</p>
+            <p class="location">President's Mall, Gopher Hills, VA (5.0 miles)</p>
+          </div>
+          <!-- Price Range -->
+          <div class="price">
+            <p>$80-500</p>
+          </div>
+          <!-- Seat & Row + Seat Rating -->
+          <div class="seat">
+            <p>Sec 1</p>
+            <p>Row 5</p>
+            <p class="rating">Great</p>
+          </div>
+          <!-- Date -->
+          <div class="date">
+            <p class="month">OCT</p>
+            <p class="day">31</p>
+          </div>
+          <!-- Buy: redirects to the vendor's ticket page -->
+          <div class="buy">
+            <a href="https://www.ticketmaster.com" target="_blank">+ Buy</a>
+          </div>
+        </li>
+        <!--********** Element **********-->
+        <li>
+          <!-- Image -->
+          <div class="image">
+            <img src="https://placehold.co/90x90?text=Concert" alt="Concert 1">
+          </div>
+          <!-- Name + Location -->
+          <div class="info">
+            <p class="name">Concert 1</p>
+            <p class="location">MSG, New York, NY (225 miles)</p>
+          </div>
+          <!-- Price Range -->
+          <div class="price">
+            <p>$10-100</p>
+          </div>
+          <!-- Seat & Row + Seat Rating -->
+          <div class="seat">
+            <p>Sec 3</p>
+            <p>Row 8</p>
+            <p class="rating">Average</p>
+          </div>
+          <!-- Date -->
+          <div class="date">
+            <p class="month">NOV</p>
+            <p class="day">26</p>
+          </div>
+          <!-- Buy: redirects to the vendor's ticket page -->
+          <div class="buy">
+            <a href="https://www.ticketmaster.com" target="_blank">+ Buy</a>
+          </div>
+        </li>
+        <!--********** Element **********-->
+        <li>
+          <!-- Image -->
+          <div class="image">
+            <img src="https://placehold.co/90x90?text=Concert" alt="Boring Concert">
+          </div>
+          <!-- Name + Location -->
+          <div class="info">
+            <p class="name">Boring Concert</p>
+            <p class="location">Center of the smARTs, Figly, VA (12.4 miles)</p>
+          </div>
+          <!-- Price Range -->
+          <div class="price">
+            <p>$10-40</p>
+          </div>
+          <!-- Seat & Row + Seat Rating -->
+          <div class="seat">
+            <p>Sec 4</p>
+            <p>Row 12</p>
+            <p class="rating">Average</p>
+          </div>
+          <!-- Date -->
+          <div class="date">
+            <p class="month">NOV</p>
+            <p class="day">26</p>
+          </div>
+          <!-- Buy: redirects to the vendor's ticket page -->
+          <div class="buy">
+            <a href="https://www.seatgeek.com" target="_blank">+ Buy</a>
+          </div>
+        </li>
+        <!--********** Element **********-->
+        <li>
+          <!-- Image -->
+          <div class="image">
+            <img src="https://placehold.co/90x90?text=Concert" alt="Concert 2">
+          </div>
+          <!-- Name + Location -->
+          <div class="info">
+            <p class="name">Concert 2</p>
+            <p class="location">Staples Center, Los Angeles, CA (2,300 miles)</p>
+          </div>
+          <!-- Price Range -->
+          <div class="price">
+            <p>$70-150</p>
+          </div>
+          <!-- Seat & Row + Seat Rating -->
+          <div class="seat">
+            <p>Sec 2</p>
+            <p>Row 3</p>
+            <p class="rating">Great</p>
+          </div>
+          <!-- Date -->
+          <div class="date">
+            <p class="month">NOV</p>
+            <p class="day">27</p>
+          </div>
+          <!-- Buy: redirects to the vendor's ticket page -->
+          <div class="buy">
+            <a href="https://www.stubhub.com" target="_blank">+ Buy</a>
+          </div>
+        </li>
+        <!--********** Element **********-->
+        <li>
+          <!-- Image -->
+          <div class="image">
+            <img src="https://placehold.co/90x90?text=Concert" alt="Fancy Concert">
+          </div>
+          <!-- Name + Location -->
+          <div class="info">
+            <p class="name">Fancy Concert</p>
+            <p class="location">High Life Orchards, Hopsfield, VA (20.1 miles)</p>
+          </div>
+          <!-- Price Range -->
+          <div class="price">
+            <p>$800</p>
+          </div>
+          <!-- Seat & Row + Seat Rating -->
+          <div class="seat">
+            <p>Sec 2</p>
+            <p>Row 1</p>
+            <p class="rating">Great</p>
+          </div>
+          <!-- Date -->
+          <div class="date">
+            <p class="month">DEC</p>
+            <p class="day">12</p>
+          </div>
+          <!-- Buy: redirects to the vendor's ticket page -->
+          <div class="buy">
+            <a href="https://www.stubhub.com" target="_blank">+ Buy</a>
+          </div>
+        </li>
+      </ul>
+    </main>
+ 
+    <!--********** Right Panel: Concert Assistant (UI only, Sprint 2) **********-->
+    <aside class="chat">
+      <h3>Concert Assistant</h3>
+      <p class="hint">Try asking:</p>
+      <ul class="prompts">
+        <li>Concerts near me this weekend</li>
+        <li>Cheapest tickets under $50</li>
+      </ul>
+      <div class="bubble bot">Hi! I can help you find concerts. (Coming in Sprint 2)</div>
+      <div class="help">?</div>
+      <input type="text" placeholder="Assistant coming soon" disabled>
+    </aside>
+ 
+    <!-- Teammate's Quick View toggle -->
+    <script>
+      function quickView() {
+        const table = document.getElementById("quickView");
+        if (table.style.display === "block") {
+          table.style.display = "none";
+        } else {
+          table.style.display = "block";
+        }
+      }
+    </script>
+  </body>
+</html>
+ 
