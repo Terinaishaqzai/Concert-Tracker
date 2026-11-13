@@ -1,7 +1,7 @@
 <!--
 This file is the Concert Tracker main page (Quick View of Concert Tickets).
-Sprint 1 MVP: HTML/CSS with sample concert data, no API connection.
-The only script switches between card view and the Quick View table.
+Search and price sorting load concert data from the Java backend.
+Quick View and cards display the same server results.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -47,6 +47,16 @@ The only script switches between card view and the Quick View table.
         <input type="text" id="fname" name="fname">
         <input type="button" value="Quick View" onclick="quickView()">
       </form>
+
+      <div class="zipform">
+        <label for="priceSort">Sort by:</label>
+        <select id="priceSort">
+          <option value="date">Soonest first</option>
+          <option value="asc">Price: Low to High</option>
+          <option value="desc">Price: High to Low</option>
+        </select>
+      </div>
+      <p id="resultsMessage" role="status" hidden></p>
 
       <!-- Quick View table (teammate's table, hidden until Quick View is clicked) -->
       <div id="quickView" style="display:none;">
@@ -297,6 +307,12 @@ The only script switches between card view and the Quick View table.
                       "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
 
       const searchInput = document.getElementById("searchInput");
+      const priceSort = document.getElementById("priceSort");
+      let latestRequest = 0;
+
+      priceSort.addEventListener("change", function () {
+        onSearch(searchInput.value);
+      });
 
       // Search when Enter is pressed
       document.getElementById("searchForm").addEventListener("submit", function (event) {
@@ -320,35 +336,60 @@ The only script switches between card view and the Quick View table.
         });
       });
 
-      // Asks the server for concerts matching the query
-      function onSearch(query) {
-        fetch("/api/concerts/search?q=" + encodeURIComponent(query))
-          .then(response => response.json())
-          .then(concerts => renderResults(concerts))
-          .catch(() => showMessage("Can't reach the server. Start it and open http://localhost:7070"));
+      // The server does the searching and sorting. Ignore older responses.
+      async function onSearch(query) {
+        const request = ++latestRequest;
+        const order = priceSort.value;
+        let url = "/api/concerts/search?q=" + encodeURIComponent(query);
+        if (order !== "date") {
+          url = "/api/concerts/sort?order=" + order + "&q=" + encodeURIComponent(query);
+        }
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error("Request failed");
+          }
+          const concerts = await response.json();
+          if (request === latestRequest) {
+            renderResults(concerts);
+          }
+        } catch (error) {
+          if (request === latestRequest) {
+            renderResults([]);
+            showMessage("Can't load concerts. Check the server and try again.");
+          }
+        }
       }
 
-      // Shows a single message in place of the concert cards
       function showMessage(text) {
-        document.getElementById("quickView").style.display = "none";
-        document.getElementById("cardView").style.display = "block";
-        document.querySelector("#cardView .boxlist").innerHTML =
-          '<li><div class="info"><p class="name">' + text + '</p></div></li>';
+        const message = document.getElementById("resultsMessage");
+        message.textContent = text;
+        message.hidden = !text;
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, function (c) {
+          return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c];
+        });
       }
 
       // Replaces the concert cards with the search results
       function renderResults(concerts) {
-        document.getElementById("quickView").style.display = "none";
-        document.getElementById("cardView").style.display = "block";
         const list = document.querySelector("#cardView .boxlist");
         list.innerHTML = "";
+        const table = document.querySelector("#quickView table");
+        table.innerHTML = "<tr><th>Concert</th><th>Venue</th><th>Price Range</th><th>Date</th><th>Seat Rating</th></tr>";
+        showMessage(concerts.length === 0 ? "No concerts found" : "");
 
-        if (concerts.length === 0) {
-          showMessage("No concerts found");
-          return;
-        }
-
-        for (const c of concerts) {
+        for (const concert of concerts) {
+          const c = {};
+          for (const key of Object.keys(concert)) {
+            c[key] = escapeHtml(concert[key]);
+          }
+          c.priceRange = c.priceRange || "Price unavailable";
+          // Only use HTTP(S) links for the Buy button.
+          c.ticketUrl = /^https?:\/\//i.test(concert.ticketUrl) ? c.ticketUrl : "#";
+          table.innerHTML += `<tr><td>${c.name}</td><td>${c.venue}</td><td>${c.priceRange}</td><td>${c.date}</td><td>${c.seatRating}</td></tr>`;
           const [year, month, day] = c.date.split("-");
           list.innerHTML += `
             <li>
@@ -367,6 +408,9 @@ The only script switches between card view and the Quick View table.
             </li>`;
         }
       }
+
+      // Replace the static examples with database results when the page opens.
+      onSearch("");
     </script>
   </body>
 </html>
