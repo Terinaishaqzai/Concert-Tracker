@@ -1,0 +1,77 @@
+@startuml
+title Concert Details - Detailed Class Diagram
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+hide circle
+skinparam packageStyle rectangle
+allowmixing
+
+package "UI" {
+  class ConcertDetailsPanel {
+    + onCardClick(id: int): void
+    + renderDetails(details: ConcertDetails): void
+    + showError(msg: String): void
+  }
+}
+
+package "Business Logic" {
+  class ConcertDetailsController {
+    - service: ConcertDetailsService
+    + handleDetails(exchange: HttpExchange): void
+    - readId(exchange: HttpExchange): Integer
+    - toJson(details: ConcertDetails): String
+  }
+
+  class ConcertDetailsService {
+    - repo: ConcertRepository
+    + getDetails(id: int): ConcertDetails
+    - getStatus(c: Concert): String
+    - daysUntil(c: Concert): long
+    - priceLabel(c: Concert): String
+  }
+
+  class ConcertDetails {
+    - concert: Concert
+    - status: String
+    - daysUntil: long
+    - priceLabel: String
+  }
+
+  class Concert {
+    - id: int
+    - name: String
+    - genre: String
+    - venue: String
+    - city: String
+    - date: LocalDate
+    - priceRange: String
+    - seatRating: String
+    - ticketUrl: String
+  }
+}
+
+package "Persistence" {
+  interface ConcertRepository {
+    + findAll(): List<Concert>
+    + findById(id: int): Optional<Concert>
+  }
+
+  class SqliteConcertRepository {
+    - dbUrl: String
+    + findAll(): List<Concert>
+    + findById(id: int): Optional<Concert>
+  }
+
+  database "concerts.db" as DB
+}
+
+ConcertDetailsPanel ..> ConcertDetailsController : GET /api/concerts/details?id=
+ConcertDetailsController --> ConcertDetailsService
+ConcertDetailsService --> ConcertRepository
+ConcertRepository <|.. SqliteConcertRepository
+SqliteConcertRepository ..> DB
+ConcertDetailsService ..> ConcertDetails
+ConcertDetails --> Concert
+@enduml
