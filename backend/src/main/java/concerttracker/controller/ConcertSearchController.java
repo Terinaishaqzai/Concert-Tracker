@@ -69,8 +69,21 @@ public class ConcertSearchController {
         return sb.append("]").toString();
     }
 
-    /** Wraps text in quotes and escapes characters that would break JSON. */
+    /** Wraps text in quotes and escapes characters that would break JSON; null becomes null. */
     private String quote(String text) {
-        return "\"" + text.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+        if (text == null) {
+            return "null";
+        }
+        StringBuilder sb = new StringBuilder("\"");
+        for (char ch : text.toCharArray()) {
+            if (ch == '"' || ch == '\\') {
+                sb.append('\\').append(ch);
+            } else if (ch < 32) {
+                sb.append(String.format("\\u%04x", (int) ch));
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.append('"').toString();
     }
 }
