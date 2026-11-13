@@ -1,0 +1,30 @@
+@startuml
+title Concert Details - View Concert
+skinparam monochrome true
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+hide circle
+
+actor User
+participant "index.html" as UI
+participant ConcertDetailsController as Ctrl
+participant ConcertDetailsService as Svc
+participant SqliteConcertRepository as Repo
+database "concerts.db" as DB
+
+User -> UI : click concert card
+UI -> Ctrl : GET /api/concerts/details?id=3
+Ctrl -> Svc : getDetails(3)
+Svc -> Repo : findById(3)
+Repo -> DB : SELECT * FROM concerts WHERE id = ?
+DB --> Repo : row
+Repo --> Svc : Concert
+Svc -> Svc : getStatus(c)
+Svc -> Svc : daysUntil(c)
+Svc -> Svc : priceLabel(c)
+Svc --> Ctrl : ConcertDetails
+Ctrl --> UI : 200 OK (JSON)
+UI -> UI : renderDetails(details)
+UI --> User : details panel
+@enduml

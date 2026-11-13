@@ -114,7 +114,7 @@ Quick View and cards display the same server results.
       <!-- Concert List -->
       <ul class="boxlist">
         <!--********** Element **********-->
-        <li>
+        <li data-id="1">
           <!-- Image -->
           <div class="image">
             <img src="https://placehold.co/90x90?text=Concert" alt="Cool Concert">
@@ -145,7 +145,7 @@ Quick View and cards display the same server results.
           </div>
         </li>
         <!--********** Element **********-->
-        <li>
+        <li data-id="2">
           <!-- Image -->
           <div class="image">
             <img src="https://placehold.co/90x90?text=Concert" alt="Concert 1">
@@ -176,7 +176,7 @@ Quick View and cards display the same server results.
           </div>
         </li>
         <!--********** Element **********-->
-        <li>
+        <li data-id="3">
           <!-- Image -->
           <div class="image">
             <img src="https://placehold.co/90x90?text=Concert" alt="Boring Concert">
@@ -207,7 +207,7 @@ Quick View and cards display the same server results.
           </div>
         </li>
         <!--********** Element **********-->
-        <li>
+        <li data-id="4">
           <!-- Image -->
           <div class="image">
             <img src="https://placehold.co/90x90?text=Concert" alt="Concert 2">
@@ -238,7 +238,7 @@ Quick View and cards display the same server results.
           </div>
         </li>
         <!--********** Element **********-->
-        <li>
+        <li data-id="6">
           <!-- Image -->
           <div class="image">
             <img src="https://placehold.co/90x90?text=Concert" alt="Fancy Concert">
@@ -270,6 +270,9 @@ Quick View and cards display the same server results.
         </li>
       </ul>
       </div>
+
+      <!-- Concert Details panel (filled in by the Concert Details script below) -->
+      <div id="concertDetails" style="display:none;"></div>
     </main>
 
     <!--********** Right Panel: Concert Assistant (UI only, Sprint 2) **********-->
@@ -392,7 +395,7 @@ Quick View and cards display the same server results.
           table.innerHTML += `<tr><td>${c.name}</td><td>${c.venue}</td><td>${c.priceRange}</td><td>${c.date}</td><td>${c.seatRating}</td></tr>`;
           const [year, month, day] = c.date.split("-");
           list.innerHTML += `
-            <li>
+            <li data-id="${c.id}">
               <div class="image"><img src="https://placehold.co/90x90?text=Concert" alt="${c.name}"></div>
               <div class="info">
                 <p class="name">${c.name}</p>
@@ -411,6 +414,63 @@ Quick View and cards display the same server results.
 
       // Replace the static examples with database results when the page opens.
       onSearch("");
+    </script>
+    <!-- Concert Details (UI layer only): asks the server for one concert and shows it.
+         The details rules (status, days until, price label) live in ConcertDetailsService. -->
+    <script>
+      const detailsPanel = document.getElementById("concertDetails");
+
+      // Clicking a concert card opens its details (the Buy link still opens the ticket site)
+      document.querySelector("#cardView .boxlist").addEventListener("click", function (event) {
+        const card = event.target.closest("li[data-id]");
+        if (card && !event.target.closest("a")) {
+          onCardClick(card.dataset.id);
+        }
+      });
+
+      // Asks the server for the details of one concert
+      function onCardClick(id) {
+        fetch("/api/concerts/details?id=" + encodeURIComponent(id))
+          .then(response => response.json())
+          .then(details => details.error ? showError(details.error) : renderDetails(details))
+          .catch(() => showError("Can't reach the server. Start it and open http://localhost:7070"));
+      }
+
+      // Fills the details panel with the concert's information
+      function renderDetails(d) {
+        const ended = d.status === "Event Ended";
+        const when = ended ? "This concert has ended"
+                   : d.daysUntil === 0 ? "Today!"
+                   : d.daysUntil + (d.daysUntil === 1 ? " day away" : " days away");
+        detailsPanel.innerHTML = `
+          <button class="close" onclick="closeDetails()">&times;</button>
+          <h2>${d.name}</h2>
+          <p class="status">${d.status} &middot; ${when}</p>
+          <table>
+            <tr><th>Genre</th><td>${d.genre}</td></tr>
+            <tr><th>Venue</th><td>${d.venue}</td></tr>
+            <tr><th>City</th><td>${d.city}</td></tr>
+            <tr><th>Date</th><td>${d.date}</td></tr>
+            <tr><th>Price</th><td>${d.priceLabel}</td></tr>
+            <tr><th>Seat Rating</th><td>${d.seatRating}</td></tr>
+          </table>
+          ${ended ? "" : `<a class="buy" href="${d.ticketUrl}" target="_blank">+ Buy Tickets</a>`}`;
+        detailsPanel.style.display = "block";
+        detailsPanel.scrollIntoView({ behavior: "smooth" });
+      }
+
+      // Shows an error message in the details panel
+      function showError(message) {
+        detailsPanel.innerHTML = `
+          <button class="close" onclick="closeDetails()">&times;</button>
+          <p class="status">${message}</p>`;
+        detailsPanel.style.display = "block";
+      }
+
+      // Hides the details panel
+      function closeDetails() {
+        detailsPanel.style.display = "none";
+      }
     </script>
   </body>
 </html>
