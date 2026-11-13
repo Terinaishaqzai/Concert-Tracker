@@ -1,10 +1,5 @@
 package concerttracker.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-import com.sun.net.httpserver.HttpServer;
-import concerttracker.controller.ConcertPriceSortController;
-import concerttracker.persistence.ConcertRepository;
-import concerttracker.persistence.SqliteConcertRepository;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -13,10 +8,21 @@ import java.net.http.HttpResponse;
 import java.nio.file.Path;
 import java.sql.DriverManager;
 import java.time.LocalDate;
+
 import org.junit.jupiter.api.AfterEach;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import com.sun.net.httpserver.HttpServer;
+
+import concerttracker.controller.ConcertPriceSortController;
+import concerttracker.persistence.ConcertRepository;
+import concerttracker.persistence.SqliteConcertRepository;
 
 /** Uses real HTTP requests and a temporary SQLite database, not shared test copies. */
 class ConcertPriceSortIntegrationTest {
@@ -31,16 +37,16 @@ class ConcertPriceSortIntegrationTest {
         String dbUrl = "jdbc:sqlite:" + folder.resolve("concerts.db");
         try (var connection = DriverManager.getConnection(dbUrl);
              var statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE concerts (id INTEGER, name TEXT, genre TEXT, venue TEXT, city TEXT, date TEXT, price_range TEXT, seat_rating TEXT, ticket_url TEXT)");
+            statement.execute("CREATE TABLE concerts (id INTEGER, name TEXT, genre TEXT, venue TEXT, city TEXT,zip_code TEXT, date TEXT, price_range TEXT, seat_rating TEXT, ticket_url TEXT)");
             String today = LocalDate.now().toString();
             String yesterday = LocalDate.now().minusDays(1).toString();
             statement.execute("INSERT INTO concerts VALUES "
-                + "(1, 'Rock Expensive', 'Rock', 'Arena', 'Test City', '" + today + "', '$80-500', 'Great', 'https://example.com'),"
-                + "(2, 'Rock Cheap', 'Rock', 'Arena', 'Test City', '" + today + "', '$10-1000', 'Great', 'https://example.com'),"
-                + "(3, 'Rock Missing', 'Rock', 'Arena', 'Test City', '" + today + "', NULL, 'Great', 'https://example.com'),"
-                + "(4, 'Jazz Show', 'Jazz', 'Arena', 'Test City', '" + today + "', '$25', 'Great', 'https://example.com'),"
-                + "(5, 'Past Show', 'Rock', 'Arena', 'Test City', '" + yesterday + "', '$1', 'Great', 'https://example.com')");
-            try (var insert = connection.prepareStatement("INSERT INTO concerts VALUES (6, ?, 'Rock', 'Arena', 'Other City', ?, '$40', 'Great', 'https://example.com')")) {
+                + "(1, 'Rock Expensive', 'Rock', 'Arena', 'Test City', 'Test ZipCode','" + today + "', '$80-500', 'Great', 'https://example.com'),"
+                + "(2, 'Rock Cheap', 'Rock', 'Arena', 'Test City', 'Test ZipCode', '" + today + "', '$10-1000', 'Great', 'https://example.com'),"
+                + "(3, 'Rock Missing', 'Rock', 'Arena', 'Test City','Test ZipCode','" + today + "', NULL, 'Great', 'https://example.com'),"
+                + "(4, 'Jazz Show', 'Jazz', 'Arena', 'Test City','Test ZipCode', '" + today + "', '$25', 'Great', 'https://example.com'),"
+                + "(5, 'Past Show', 'Rock', 'Arena', 'Test City', 'ZipCode','" + yesterday + "', '$1', 'Great', 'https://example.com')");
+            try (var insert = connection.prepareStatement("INSERT INTO concerts VALUES (6, ?, 'Rock', 'Arena', 'Other City','ZipCode', ?, '$40', 'Great', 'https://example.com')")) {
                 insert.setString(1, "Rock \"Quoted\"\nShow");
                 insert.setString(2, today);
                 insert.executeUpdate();

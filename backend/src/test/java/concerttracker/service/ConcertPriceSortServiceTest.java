@@ -135,7 +135,7 @@ public class ConcertPriceSortServiceTest {
     }
 
     private static Concert concert(int id, String price) {
-        return new Concert(id, "Test Concert " + id, "Pop", "Test Venue", "Test City",
+        return new Concert(id, "Test Concert " + id, "Pop", "Test Venue", "Test City","Test ZIP",
                 LocalDate.of(9999, 1, 1), price, "Great", "https://example.com");
     }
 

@@ -1,11 +1,12 @@
 package concerttracker.service;
 
-import concerttracker.model.Concert;
-import concerttracker.persistence.ConcertRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import concerttracker.model.Concert;
+import concerttracker.persistence.ConcertRepository;
 
 /** Business logic for searching upcoming concerts by artist, genre, or city. */
 public class ConcertSearchService {
@@ -54,7 +55,7 @@ public class ConcertSearchService {
         if (c.getPriceRange() != null && !c.getPriceRange().isBlank()) {
             return c;
         }
-        return new Concert(c.getId(), c.getName(), c.getGenre(), c.getVenue(), c.getCity(),
+        return new Concert(c.getId(), c.getName(), c.getGenre(), c.getVenue(), c.getCity(), c.getZipCode(),
                 c.getDate(), PRICE_UNAVAILABLE, c.getSeatRating(), c.getTicketUrl());
     }
 }
