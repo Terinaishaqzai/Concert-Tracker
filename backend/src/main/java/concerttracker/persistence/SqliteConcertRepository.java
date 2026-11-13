@@ -1,6 +1,5 @@
 package concerttracker.persistence;
 
-import concerttracker.model.Concert;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,6 +10,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import concerttracker.model.Concert;
 
 /** Loads concerts from the SQLite database using JDBC. */
 public class SqliteConcertRepository implements ConcertRepository {
@@ -61,6 +62,7 @@ public class SqliteConcertRepository implements ConcertRepository {
                 rs.getString("genre"),
                 rs.getString("venue"),
                 rs.getString("city"),
+                rs.getString("zip_code"),
                 LocalDate.parse(rs.getString("date")),
                 rs.getString("price_range"),
                 rs.getString("seat_rating"),

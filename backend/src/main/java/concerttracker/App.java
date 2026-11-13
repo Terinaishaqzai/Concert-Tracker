@@ -1,14 +1,5 @@
 package concerttracker;
 
-import com.sun.net.httpserver.HttpServer;
-import concerttracker.controller.ConcertDetailsController;
-import concerttracker.controller.ConcertSearchController;
-import concerttracker.controller.ConcertPriceSortController;
-import concerttracker.persistence.ConcertRepository;
-import concerttracker.persistence.SqliteConcertRepository;
-import concerttracker.service.ConcertDetailsService;
-import concerttracker.service.ConcertSearchService;
-import concerttracker.service.ConcertPriceSortService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,6 +11,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import com.sun.net.httpserver.HttpServer;
+
+import concerttracker.controller.ConcertDetailsController;
+import concerttracker.controller.ConcertPriceSortController;
+import concerttracker.controller.ConcertSearchController;
+import concerttracker.controller.ConcertZipController;
+import concerttracker.persistence.ConcertRepository;
+import concerttracker.persistence.SqliteConcertRepository;
+import concerttracker.service.ConcertDetailsService;
+import concerttracker.service.ConcertPriceSortService;
+import concerttracker.service.ConcertSearchService;
+import concerttracker.service.ConcertZipService;
 
 /** Starts the Concert Tracker server and connects the three layers. */
 public class App {
@@ -40,10 +44,14 @@ public class App {
         ConcertPriceSortService sortService = new ConcertPriceSortService(repo);
         ConcertPriceSortController sortController = new ConcertPriceSortController(searchService, sortService);
 
+        ConcertZipService zipServ = new ConcertZipService(searchService);
+        ConcertZipController zipCont = new ConcertZipController(zipServ);
+
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/api/concerts/search", searchController::handleSearch);
         server.createContext("/api/concerts/details", detailsController::handleDetails);
         server.createContext("/api/concerts/sort", sortController::handleSort);
+        server.createContext("/api/concerts/zip",zipCont::handleZip);
         server.createContext("/", App::serveWebsiteFile);
         server.start();
         System.out.println("Concert Tracker running at http://localhost:" + PORT);

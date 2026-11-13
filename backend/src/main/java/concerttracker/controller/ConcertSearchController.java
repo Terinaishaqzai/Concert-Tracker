@@ -1,13 +1,15 @@
 package concerttracker.controller;
 
-import com.sun.net.httpserver.HttpExchange;
-import concerttracker.model.Concert;
-import concerttracker.service.ConcertSearchService;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import com.sun.net.httpserver.HttpExchange;
+
+import concerttracker.model.Concert;
+import concerttracker.service.ConcertSearchService;
 
 /** Receives search requests from the web page and returns results as JSON. */
 public class ConcertSearchController {
@@ -60,6 +62,7 @@ public class ConcertSearchController {
               .append("\"genre\":").append(quote(c.getGenre())).append(",")
               .append("\"venue\":").append(quote(c.getVenue())).append(",")
               .append("\"city\":").append(quote(c.getCity())).append(",")
+              .append("\"zipCode\":").append(quote(c.getZipCode())).append(",")
               .append("\"date\":").append(quote(c.getDate().toString())).append(",")
               .append("\"priceRange\":").append(quote(c.getPriceRange())).append(",")
               .append("\"seatRating\":").append(quote(c.getSeatRating())).append(",")

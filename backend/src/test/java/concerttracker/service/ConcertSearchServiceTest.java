@@ -1,24 +1,25 @@
 package concerttracker.service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.Test;
 
 import concerttracker.model.Concert;
 import concerttracker.persistence.ConcertRepository;
-import java.time.LocalDate;
-import java.util.List;
-import org.junit.jupiter.api.Test;
 
 /** Tests the search rules using a fake repository instead of the real database. */
 class ConcertSearchServiceTest {
     private static final LocalDate TODAY = LocalDate.now();
 
     private final List<Concert> data = List.of(
-            new Concert(1, "Drake Live", "Hip-Hop", "Capital One Arena", "Washington, DC",
+            new Concert(1, "Drake Live", "Hip-Hop", "Capital One Arena", "Washington, DC","03134",
                     TODAY.plusDays(30), "$120-450", "Great", "https://www.ticketmaster.com"),
-            new Concert(2, "Concert 1", "Rock", "MSG", "New York, NY",
+            new Concert(2, "Concert 1", "Rock", "MSG", "New York, NY","09325",
                     TODAY.plusDays(10), null, "Average", "https://www.ticketmaster.com"),
-            new Concert(3, "Old Show", "Pop", "MSG", "New York, NY",
+            new Concert(3, "Old Show", "Pop", "MSG", "New York, NY","09325",
                     TODAY.minusDays(5), "$20-60", "Great", "https://www.seatgeek.com"));
 
     // Fake repository: works because the service depends on the interface

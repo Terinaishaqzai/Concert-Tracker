@@ -42,10 +42,11 @@ Quick View and cards display the same server results.
       </header>
 
       <!-- Zipcode + Quick View toggle (teammate's form) -->
-      <form class="zipform">
-        <label for="fname">Zipcode:</label>
-        <input type="text" id="fname" name="fname">
-        <input type="button" value="Quick View" onclick="quickView()">
+      <form class="zipform" id="zipForm">
+        <label for="zipInput">Zipcode:</label>
+        <input type="text" id="zipInput" maxLength="5">
+        <input type="submit" value="Find Nearby">
+        <input type = "button" value="Quick View" onclick="quickView()">
       </form>
 
       <div class="zipform">
@@ -381,7 +382,7 @@ Quick View and cards display the same server results.
         const list = document.querySelector("#cardView .boxlist");
         list.innerHTML = "";
         const table = document.querySelector("#quickView table");
-        table.innerHTML = "<tr><th>Concert</th><th>Venue</th><th>Price Range</th><th>Date</th><th>Seat Rating</th></tr>";
+        table.innerHTML = "<tr><th>Concert</th><th>Venue</th><th>ZIP</th><th>Price Range</th><th>Date</th><th>Seat Rating</th></tr>";
         showMessage(concerts.length === 0 ? "No concerts found" : "");
 
         for (const concert of concerts) {
@@ -392,14 +393,14 @@ Quick View and cards display the same server results.
           c.priceRange = c.priceRange || "Price unavailable";
           // Only use HTTP(S) links for the Buy button.
           c.ticketUrl = /^https?:\/\//i.test(concert.ticketUrl) ? c.ticketUrl : "#";
-          table.innerHTML += `<tr><td>${c.name}</td><td>${c.venue}</td><td>${c.priceRange}</td><td>${c.date}</td><td>${c.seatRating}</td></tr>`;
+          table.innerHTML += `<tr><td>${c.name}</td><td>${c.venue}</td><td>${c.zipCode}</td><td>${c.priceRange}</td><td>${c.date}</td><td>${c.seatRating}</td></tr>`;
           const [year, month, day] = c.date.split("-");
           list.innerHTML += `
             <li data-id="${c.id}">
               <div class="image"><img src="https://placehold.co/90x90?text=Concert" alt="${c.name}"></div>
               <div class="info">
                 <p class="name">${c.name}</p>
-                <p class="location">${c.venue}, ${c.city} &middot; ${c.genre}</p>
+                <p class="location">${c.venue}, ${c.city}, ${c.zipCode} &middot; ${c.genre}</p>
               </div>
               <div class="price"><p>${c.priceRange}</p></div>
               <div class="seat"><p class="rating">${c.seatRating}</p></div>
@@ -411,7 +412,28 @@ Quick View and cards display the same server results.
             </li>`;
         }
       }
-
+      // ZIP search: the server checks the ZIP and picks the concerts (ConcertZipService).
+      document.getElementById("zipForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+        const zip = document.getElementById("zipInput").value.trim();
+        if (zip === "") {
+          onSearch(searchInput.value);  // empty box = normal search
+          return;
+        }
+        try {
+          const response = await fetch("/api/concerts/zip?zip=" + encodeURIComponent(zip));
+          const data = await response.json();
+          if (response.ok) {
+            renderResults(data);
+          } else {
+            renderResults([]);
+            showMessage(data.error);
+          }
+        } catch (error) {
+          renderResults([]);
+          showMessage("Can't load concerts. Check the server and try again.");
+        }
+      });
       // Replace the static examples with database results when the page opens.
       onSearch("");
     </script>
@@ -450,6 +472,7 @@ Quick View and cards display the same server results.
             <tr><th>Genre</th><td>${d.genre}</td></tr>
             <tr><th>Venue</th><td>${d.venue}</td></tr>
             <tr><th>City</th><td>${d.city}</td></tr>
+            <tr><th>ZIP</th><td>${d.zipCode}</td></tr>
             <tr><th>Date</th><td>${d.date}</td></tr>
             <tr><th>Price</th><td>${d.priceLabel}</td></tr>
             <tr><th>Seat Rating</th><td>${d.seatRating}</td></tr>
