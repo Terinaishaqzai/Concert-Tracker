@@ -65,3 +65,12 @@ The 22 original checks are grouped into one JUnit test; Maven test totals count 
 
 Updated diagram images are in the repository root (Shuai_Zheng_PriceSort_*.png).
 The editable PPTX is in `docs/diagrams/shuai/`.
+
+## Concert Display
+
+ConcertDisplayService takes output of other services, and converts it into html format.
+This format depends on the view mode, in which there are two options:
+- Card: This mode is boxy and more visually appealing, with an image of the concert
+- List: This mode is dense with information, allowing for easier lookup and comparison
+
+The Quick View button on the website would perform a POST request.
