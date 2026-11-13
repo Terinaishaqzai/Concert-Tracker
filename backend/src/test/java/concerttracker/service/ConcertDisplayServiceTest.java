@@ -1,7 +1,7 @@
 package concerttracker.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+//import static org.junit.jupiter.api.Assertions.assertEquals;
+//import static org.junit.jupiter.api.Assertions.assertThrows;
 
 //import concerttracker.service.ConcertDisplayService;
 import concerttracker.model.Concert;
@@ -11,7 +11,6 @@ import java.time.LocalDate;
 public class ConcertDisplayServiceTest{
 
     public static void main(String[] args){
-        String errText = "<p>Error, could not load data<p>\n";
         ConcertDisplayService service = new ConcertDisplayService();
         List<Concert> concerts = List().of(
             new Concert(0, "Steel Boots", "Rock", "Park Hall", "Fairfax", LocalDate.now(),
@@ -55,13 +54,6 @@ public class ConcertDisplayServiceTest{
         void defaultGetHtml(){
             ConcertDisplayService serv = new ConcertDisplayService();
             assertEquals(service.getHTML(), "");
-        }
-        
-        @Test
-        void loadLayoutSucceeds(){
-            ConcertDisplayService serv = new ConcertDisplayService();
-            serv.toggleViewMode();
-            assertTrue(!service.getHTML().equals(errText));
         }
         
         @Test

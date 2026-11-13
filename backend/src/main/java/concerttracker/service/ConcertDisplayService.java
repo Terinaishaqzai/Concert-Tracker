@@ -12,6 +12,45 @@ import java.nio.file.Paths;
 /* Displays concerts */
 public class ConcertDisplayService {
 
+    private final String LISTLAYOUT = """
+          <tr>
+            <td>{NAME}</td>
+            <td>{VENUE}</td>
+            <td>{PRICE}</td>
+            <td>{DATE}</td>
+            <td>{SEATRATING}</td>
+          </tr>""";
+          
+    private final String CARDLAYOUT = """
+        <!--********** Element **********-->
+        <li>
+          <!-- Image -->
+          <div class="image">
+            <img src="https://placehold.co/90x90?text=Concert" alt="{NAME}">
+          </div>
+          <!-- Name + Location -->
+          <div class="info">
+            <p class="name">{NAME}</p>
+            <p class="location">{VENUE}, {CITY}</p>
+          </div>
+          <!-- Price Range -->
+          <div class="price">
+            <p>{PRICE}</p>
+          </div>
+          <!-- Seat & Row + Seat Rating -->
+          <div class="seat">
+            <p class="rating">{SEATRATING}</p>
+          </div>
+          <!-- Date -->
+          <div class="date">
+            <p>{DATE}</p>
+          </div>
+          <!-- Buy: redirects to the vendor's ticket page -->
+          <div class="buy">
+            <a href="{LINK}" target="_blank">+ Buy</a>
+          </div>
+        </li>""";
+    
     private List<Concert> results;
     private String concertHtml;
     
@@ -53,26 +92,9 @@ public class ConcertDisplayService {
     }
     
     private String generateCardHTML() {
-        Scanner sc;
-        try {
-            Path path = Paths.get("ConcertDisplayService.java").toAbsolutePath().getParent();
-            path = path.resolve("concerttracker/persistence/cardViewLayout.txt");
-            sc = new Scanner(path.toFile());
-        }
-        catch(Exception e){
-            return "<p>Error, could not load data<p>\n";
-        }
-        
-        StringBuilder htmlBuilder = new StringBuilder();
-        while(sc.hasNext()) {
-                htmlBuilder.append(sc.nextLine());
-                htmlBuilder.append("\n");
-        }
-        sc.close();
-        
         String html = "";
         for (Concert concert : results) {
-            String listElement = htmlBuilder.toString();
+            String listElement = CARDLAYOUT+"";
             listElement = listElement.replaceAll("\\{NAME\\}", concert.getName())
             .replaceAll("\\{VENUE\\}", concert.getVenue())
             .replaceAll("\\{CITY\\}", concert.getCity())
@@ -86,26 +108,9 @@ public class ConcertDisplayService {
     }
     
     private String generateListHTML() {
-        Scanner sc;
-        try {
-            Path path = Paths.get("ConcertDisplayService.java").toAbsolutePath().getParent();
-            path = path.resolve("concerttracker/persistence/listViewLayout.txt");
-            sc = new Scanner(path.toFile());
-        }
-        catch(Exception e) {
-            return "<p>Error, could not load data<p>\n";
-        }
-        
-        StringBuilder htmlBuilder = new StringBuilder();
-        while(sc.hasNext()) {
-                htmlBuilder.append(sc.nextLine());
-                htmlBuilder.append("\n");
-        }
-        sc.close();
-        
         String html = "";
         for (Concert concert : results) {
-            String listElement = htmlBuilder.toString();
+            String listElement = LISTLAYOUT+"";
             listElement = listElement.replaceAll("\\{NAME\\}", concert.getName())
             .replaceAll("\\{VENUE\\}", concert.getVenue())
             .replaceAll("\\{CITY\\}", concert.getCity())
