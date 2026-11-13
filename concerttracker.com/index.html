@@ -45,7 +45,7 @@ Quick View and cards display the same server results.
       <form class="zipform">
         <label for="fname">Zipcode:</label>
         <input type="text" id="fname" name="fname">
-        <input type="button" value="Quick View" onclick="quickView()">
+        <input id="quickviewbutton" type="button" value="Quick View">
       </form>
 
       <div class="zipform">
@@ -288,17 +288,48 @@ Quick View and cards display the same server results.
       <input type="text" placeholder="Assistant coming soon" disabled>
     </aside>
 
-    <!-- Teammate's Quick View toggle -->
+    <!-- Teammate's Quick View toggle, converted into Concert Display. 
+         Sends the visibility of concert elements to the server
+         Server sends back a new view mode
+         The new view mode is used to change visibility of concert elements -->
     <script>
+      const table = document.getElementById("quickView");
+      const cards = document.getElementById("cardView");
+      const button = document.getElementById("quickviewbutton");
+
+      const url = "/api/concerts/display"
+      
+      button.addEventListener("click", function () {
+        quickView();
+      });
+
       function quickView() {
-        const table = document.getElementById("quickView");
-        const cards = document.getElementById("cardView");
-        if (table.style.display === "block") {
-          table.style.display = "none";
-          cards.style.display = "block";
-        } else {
-          table.style.display = "block";
-          cards.style.display = "none";
+        // Returns the next view mode (toggles)
+        const response = fetch(url, {
+          method: "POST",
+          body: JSON.stringify({
+            table: table.style.display,
+            card: cards.style.display
+          })
+        })
+        
+        // Only change mode if there was a response
+        if(response.ok) {
+          changeView(response.text());
+        }
+      }
+
+      function changeView(){
+        switch (viewmode) {
+          case "CARD":
+            table.style.display = "none";
+            cards.style.display = "block";
+          case "LIST":
+            table.style.display = "block";
+            cards.style.display = "none";
+          default:
+            table.style.display = "none";
+            cards.style.display = "block";
         }
       }
     </script>

@@ -6,10 +6,51 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.Scanner;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /* Displays concerts */
 public class ConcertDisplayService {
 
+    private final String LISTLAYOUT = """
+          <tr>
+            <td>{NAME}</td>
+            <td>{VENUE}</td>
+            <td>{PRICE}</td>
+            <td>{DATE}</td>
+            <td>{SEATRATING}</td>
+          </tr>""";
+          
+    private final String CARDLAYOUT = """
+        <!--********** Element **********-->
+        <li>
+          <!-- Image -->
+          <div class="image">
+            <img src="https://placehold.co/90x90?text=Concert" alt="{NAME}">
+          </div>
+          <!-- Name + Location -->
+          <div class="info">
+            <p class="name">{NAME}</p>
+            <p class="location">{VENUE}, {CITY}</p>
+          </div>
+          <!-- Price Range -->
+          <div class="price">
+            <p>{PRICE}</p>
+          </div>
+          <!-- Seat & Row + Seat Rating -->
+          <div class="seat">
+            <p class="rating">{SEATRATING}</p>
+          </div>
+          <!-- Date -->
+          <div class="date">
+            <p>{DATE}</p>
+          </div>
+          <!-- Buy: redirects to the vendor's ticket page -->
+          <div class="buy">
+            <a href="{LINK}" target="_blank">+ Buy</a>
+          </div>
+        </li>""";
+    
     private List<Concert> results;
     private String concertHtml;
     
@@ -17,7 +58,7 @@ public class ConcertDisplayService {
      * - CARD: Visually Appealing
      * - LIST: Information Dense
      */
-    private ArrayList<String> viewModeList;
+    private List<String> viewModeList = List.of("CARD", "LIST");
     
     /* Determines which setting to do */
     private String concertViewMode;
@@ -27,9 +68,6 @@ public class ConcertDisplayService {
     public ConcertDisplayService() {
         concertHtml = "";
         results = new ArrayList<Concert>();
-        viewModeList = new ArrayList<String>();
-        viewModeList.add("CARD");
-        viewModeList.add("LIST");
         defaultViewMode = "CARD";
         concertViewMode = defaultViewMode;
     }
@@ -42,10 +80,10 @@ public class ConcertDisplayService {
      * This is called every time the results or view mode change.
      */
     private void generateHTML() {
-        if (concertViewMode.equals("CARD")) {
+        if (concertViewMode.compareTo("CARD") == 0) {
             concertHtml = generateCardHTML();
         }
-        else if (concertViewMode.equals("LIST")) {
+        else if (concertViewMode.compareTo("LIST") == 0) {
             concertHtml = generateListHTML();
         }
         else {
@@ -54,24 +92,9 @@ public class ConcertDisplayService {
     }
     
     private String generateCardHTML() {
-        Scanner sc;
-        try {
-            sc = new Scanner(new File("concerttracker/persistence/cardViewLayout.txt"));
-        }
-        catch(Exception e){
-            return "<p>Error, could not load data<p>\n";
-        }
-        
-        StringBuilder htmlBuilder = new StringBuilder();
-        while(sc.hasNext()) {
-                htmlBuilder.append(sc.nextLine());
-                htmlBuilder.append("\n");
-        }
-        sc.close();
-        
         String html = "";
         for (Concert concert : results) {
-            String listElement = htmlBuilder.toString();
+            String listElement = CARDLAYOUT+"";
             listElement = listElement.replaceAll("\\{NAME\\}", concert.getName())
             .replaceAll("\\{VENUE\\}", concert.getVenue())
             .replaceAll("\\{CITY\\}", concert.getCity())
@@ -85,24 +108,9 @@ public class ConcertDisplayService {
     }
     
     private String generateListHTML() {
-        Scanner sc;
-        try {
-            sc = new Scanner(new File("concerttracker/persistence/listViewLayout.txt"));
-        }
-        catch(Exception e){
-            return "<p>Error, could not load data<p>\n";
-        }
-        
-        StringBuilder htmlBuilder = new StringBuilder();
-        while(sc.hasNext()) {
-                htmlBuilder.append(sc.nextLine());
-                htmlBuilder.append("\n");
-        }
-        sc.close();
-        
         String html = "";
         for (Concert concert : results) {
-            String listElement = htmlBuilder.toString();
+            String listElement = LISTLAYOUT+"";
             listElement = listElement.replaceAll("\\{NAME\\}", concert.getName())
             .replaceAll("\\{VENUE\\}", concert.getVenue())
             .replaceAll("\\{CITY\\}", concert.getCity())
@@ -126,12 +134,17 @@ public class ConcertDisplayService {
     
     /* Toggles between the two existing view modes */
     public void toggleViewMode() {
-        if (concertViewMode.equals("LIST")) {
+        if (concertViewMode.compareTo("LIST") == 0) {
             setViewMode("CARD");
         }
         else {
             setViewMode("LIST");
         }
+    }
+    
+    /* Gets the current concert view mode */
+    public String getViewMode(){
+        return concertViewMode;
     }
     
     /* Sets the current concert view mode */
@@ -145,7 +158,7 @@ public class ConcertDisplayService {
             concertViewMode = newViewMode;
         }
         
-        if (!oldViewMode.equals(newViewMode)){
+        if (oldViewMode.compareTo(newViewMode) != 0){
             generateHTML();
         }
     }
