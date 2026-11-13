@@ -22,6 +22,7 @@ package "Business Logic" {
     + handleDetails(exchange: HttpExchange): void
     - readId(exchange: HttpExchange): Integer
     - toJson(details: ConcertDetails): String
+    - send(exchange: HttpExchange, status: int, json: String): void
   }
 
   class ConcertDetailsService {
@@ -37,6 +38,10 @@ package "Business Logic" {
     - status: String
     - daysUntil: long
     - priceLabel: String
+  }
+
+  class ConcertNotFoundException {
+    + ConcertNotFoundException(id: int)
   }
 
   class Concert {
@@ -73,5 +78,6 @@ ConcertDetailsService --> ConcertRepository
 ConcertRepository <|.. SqliteConcertRepository
 SqliteConcertRepository ..> DB
 ConcertDetailsService ..> ConcertDetails
+ConcertDetailsService ..> ConcertNotFoundException : throws
 ConcertDetails --> Concert
 @enduml
