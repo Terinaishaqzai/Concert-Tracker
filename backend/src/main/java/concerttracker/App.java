@@ -2,9 +2,11 @@ package concerttracker;
 
 import com.sun.net.httpserver.HttpServer;
 import concerttracker.controller.ConcertSearchController;
+import concerttracker.controller.ConcertPriceSortController;
 import concerttracker.persistence.ConcertRepository;
 import concerttracker.persistence.SqliteConcertRepository;
 import concerttracker.service.ConcertSearchService;
+import concerttracker.service.ConcertPriceSortService;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -31,8 +33,12 @@ public class App {
         ConcertSearchService searchService = new ConcertSearchService(repo);
         ConcertSearchController searchController = new ConcertSearchController(searchService);
 
+        ConcertPriceSortService sortService = new ConcertPriceSortService(repo);
+        ConcertPriceSortController sortController = new ConcertPriceSortController(searchService, sortService);
+
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
         server.createContext("/api/concerts/search", searchController::handleSearch);
+        server.createContext("/api/concerts/sort", sortController::handleSort);
         server.createContext("/", App::serveWebsiteFile);
         server.start();
         System.out.println("Concert Tracker running at http://localhost:" + PORT);
