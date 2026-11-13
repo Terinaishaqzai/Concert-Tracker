@@ -1,0 +1,41 @@
+@startuml search-sequence-empty-noresults
+' Sequence diagram: business rules for a blank query and for no matches
+title Concert Search - Empty Query / No Results
+autonumber
+
+actor User
+participant "SearchBar\n(index.html)" as UI
+participant ConcertSearchController as Ctrl
+participant ConcertSearchService as Svc
+participant "ConcertRepository\n(SqliteConcertRepository)" as Repo
+database "concerts.db" as DB
+
+User -> UI : submits search
+UI -> Ctrl : GET /api/concerts/search?q=<query>
+activate Ctrl
+Ctrl -> Svc : search(query)
+activate Svc
+Svc -> Repo : findAll()
+activate Repo
+Repo -> DB : SELECT * FROM concerts
+DB --> Repo : rows
+Repo --> Svc : List<Concert>
+deactivate Repo
+
+alt query is null or blank
+  Svc --> Ctrl : all upcoming concerts
+else no concert matches query
+  Svc --> Ctrl : empty list
+end
+deactivate Svc
+
+Ctrl --> UI : 200 OK (JSON)
+deactivate Ctrl
+
+alt list is empty
+  UI --> User : shows "No concerts found"
+else list has concerts
+  UI -> UI : renderResults(concerts)
+  UI --> User : shows concert cards
+end
+@enduml

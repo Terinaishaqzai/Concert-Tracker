@@ -1,0 +1,33 @@
+@startuml search-conceptual-class
+' Conceptual class diagram: Concert Search (problem level, no code details)
+title Concert Search - Conceptual Class Diagram
+hide circle
+hide methods
+skinparam classAttributeIconSize 0
+
+class User {
+  zipcode
+}
+
+class Search {
+  keyword
+}
+
+class Concert {
+  name
+  genre
+  date
+  priceRange
+  seatRating
+  ticketLink
+}
+
+class Venue {
+  name
+  city
+}
+
+User "1" -- "0..*" Search : performs >
+Search "1" -- "0..*" Concert : returns >
+Concert "0..*" -- "1" Venue : held at >
+@enduml
