@@ -20,9 +20,9 @@ The only script switches between card view and the Quick View table.
       </div>
       <h3>Past Chats / Events</h3>
       <ul class="pastlist">
-        <li><a href="#">Drake tickets</a></li>
-        <li><a href="#">Harry Styles</a></li>
-        <li><a href="#">Jazz concerts</a></li>
+        <li><a href="#" data-search="drake">Drake tickets</a></li>
+        <li><a href="#" data-search="harry styles">Harry Styles</a></li>
+        <li><a href="#" data-search="jazz">Jazz concerts</a></li>
       </ul>
     </aside>
 
@@ -31,9 +31,9 @@ The only script switches between card view and the Quick View table.
 
       <!-- Top Bar: Search + User Info -->
       <header class="topbar">
-        <form class="search">
+        <form class="search" id="searchForm">
           <span>&#128269;</span>
-          <input type="text" placeholder="Search concerts, artists, or cities">
+          <input type="text" id="searchInput" placeholder="Search by artist, genre, or city">
         </form>
         <a class="user" href="#">
           <span class="avatar">&#128100;</span>
@@ -286,6 +286,85 @@ The only script switches between card view and the Quick View table.
         } else {
           table.style.display = "block";
           cards.style.display = "none";
+        }
+      }
+    </script>
+
+    <!-- Concert Search (UI layer only): sends the search to the server and shows the results.
+         The search rules live in ConcertSearchService on the server, not here. -->
+    <script>
+      const MONTHS = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+                      "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
+      const searchInput = document.getElementById("searchInput");
+
+      // Search when Enter is pressed
+      document.getElementById("searchForm").addEventListener("submit", function (event) {
+        event.preventDefault();  // stop the page from reloading
+        onSearch(searchInput.value);
+      });
+
+      // Search while typing (waits until the user pauses for 0.3 seconds)
+      let typingTimer;
+      searchInput.addEventListener("input", function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => onSearch(searchInput.value), 300);
+      });
+
+      // Clicking a name in the sidebar searches for it
+      document.querySelectorAll(".pastlist a").forEach(function (link) {
+        link.addEventListener("click", function (event) {
+          event.preventDefault();
+          searchInput.value = link.dataset.search;
+          onSearch(link.dataset.search);
+        });
+      });
+
+      // Asks the server for concerts matching the query
+      function onSearch(query) {
+        fetch("/api/concerts/search?q=" + encodeURIComponent(query))
+          .then(response => response.json())
+          .then(concerts => renderResults(concerts))
+          .catch(() => showMessage("Can't reach the server. Start it and open http://localhost:7070"));
+      }
+
+      // Shows a single message in place of the concert cards
+      function showMessage(text) {
+        document.getElementById("quickView").style.display = "none";
+        document.getElementById("cardView").style.display = "block";
+        document.querySelector("#cardView .boxlist").innerHTML =
+          '<li><div class="info"><p class="name">' + text + '</p></div></li>';
+      }
+
+      // Replaces the concert cards with the search results
+      function renderResults(concerts) {
+        document.getElementById("quickView").style.display = "none";
+        document.getElementById("cardView").style.display = "block";
+        const list = document.querySelector("#cardView .boxlist");
+        list.innerHTML = "";
+
+        if (concerts.length === 0) {
+          showMessage("No concerts found");
+          return;
+        }
+
+        for (const c of concerts) {
+          const [year, month, day] = c.date.split("-");
+          list.innerHTML += `
+            <li>
+              <div class="image"><img src="https://placehold.co/90x90?text=Concert" alt="${c.name}"></div>
+              <div class="info">
+                <p class="name">${c.name}</p>
+                <p class="location">${c.venue}, ${c.city} &middot; ${c.genre}</p>
+              </div>
+              <div class="price"><p>${c.priceRange}</p></div>
+              <div class="seat"><p class="rating">${c.seatRating}</p></div>
+              <div class="date">
+                <p class="month">${MONTHS[Number(month) - 1]}</p>
+                <p class="day">${Number(day)}</p>
+              </div>
+              <div class="buy"><a href="${c.ticketUrl}" target="_blank">+ Buy</a></div>
+            </li>`;
         }
       }
     </script>
