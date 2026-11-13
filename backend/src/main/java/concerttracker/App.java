@@ -42,7 +42,7 @@ public class App {
         ConcertPriceSortService sortService = new ConcertPriceSortService(repo);
         ConcertPriceSortController sortController = new ConcertPriceSortController(searchService, sortService);
 
-        ConcertDisplayService displayService = new ConcertDisplayservice();
+        ConcertDisplayService displayService = new ConcertDisplayService();
         ConcertDisplayController displayController = new ConcertDisplayController(displayService);
 
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);

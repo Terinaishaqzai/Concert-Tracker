@@ -58,7 +58,7 @@ public class ConcertDisplayService {
      * - CARD: Visually Appealing
      * - LIST: Information Dense
      */
-    private List<String> viewModeList = List.of("CARD, LIST");
+    private List<String> viewModeList = List.of("CARD", "LIST");
     
     /* Determines which setting to do */
     private String concertViewMode;
@@ -80,10 +80,10 @@ public class ConcertDisplayService {
      * This is called every time the results or view mode change.
      */
     private void generateHTML() {
-        if (concertViewMode.equals("CARD")) {
+        if (concertViewMode.compareTo("CARD") == 0) {
             concertHtml = generateCardHTML();
         }
-        else if (concertViewMode.equals("LIST")) {
+        else if (concertViewMode.compareTo("LIST") == 0) {
             concertHtml = generateListHTML();
         }
         else {
@@ -134,7 +134,7 @@ public class ConcertDisplayService {
     
     /* Toggles between the two existing view modes */
     public void toggleViewMode() {
-        if (concertViewMode.equals("LIST")) {
+        if (concertViewMode.compareTo("LIST") == 0) {
             setViewMode("CARD");
         }
         else {
@@ -158,7 +158,7 @@ public class ConcertDisplayService {
             concertViewMode = newViewMode;
         }
         
-        if (!oldViewMode.equals(newViewMode)){
+        if (oldViewMode.compareTo(newViewMode) != 0){
             generateHTML();
         }
     }

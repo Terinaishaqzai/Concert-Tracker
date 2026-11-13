@@ -6,9 +6,8 @@ import concerttracker.service.ConcertDisplayService;
 import concerttracker.service.ConcertSearchService;
 import concerttracker.service.ConcertPriceSortService;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /* Receives search requests from the web page and returns results as JSON. */
@@ -24,13 +23,20 @@ public class ConcertDisplayController {
         //this.sortService = null;
     }
 
-    /* Handles POST /api/concerts/display["?"fish] HTTP/1.1 */
-    public void handleButton(HttpExchange exchange) throws IOException {
+    /* Handles POST /api/concerts/display */
+    public void handleDisplay(HttpExchange exchange) throws IOException {
         
-        if (!exchange.getRequestMethod().equals("POST")) {
+        if (exchange.getRequestMethod().compareTo("POST") != 0) {
             return;
         }
         
-        //String query = readQueryParam(exchange, "q");
+        //InputStream in = exchange.getRequestBody();
+        displayService.toggleViewMode();
+        
+        String newConcertViewMode = displayService.getViewMode();
+        byte[] body = newConcertViewMode.getBytes();
+        OutputStream out = exchange.getResponseBody();
+        out.write(body);
+        out.close();
     }
 }

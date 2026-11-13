@@ -299,7 +299,7 @@ Quick View and cards display the same server results.
 
       const url = "/api/concerts/display"
       
-      button.addEventListener("onclick", function () {
+      button.addEventListener("click", function () {
         quickView();
       });
 
@@ -313,12 +313,10 @@ Quick View and cards display the same server results.
           })
         })
         
-        // Keep view mode the same
-        if(!response.ok) {
-          return
+        // Only change mode if there was a response
+        if(response.ok) {
+          changeView(response.text());
         }
-        
-        changeView(response.text());
       }
 
       function changeView(){
