@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.Scanner;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /* Displays concerts */
 public class ConcertDisplayService {
@@ -17,7 +19,7 @@ public class ConcertDisplayService {
      * - CARD: Visually Appealing
      * - LIST: Information Dense
      */
-    private ArrayList<String> viewModeList;
+    private List<String> viewModeList = List.of("CARD, LIST");
     
     /* Determines which setting to do */
     private String concertViewMode;
@@ -27,9 +29,6 @@ public class ConcertDisplayService {
     public ConcertDisplayService() {
         concertHtml = "";
         results = new ArrayList<Concert>();
-        viewModeList = new ArrayList<String>();
-        viewModeList.add("CARD");
-        viewModeList.add("LIST");
         defaultViewMode = "CARD";
         concertViewMode = defaultViewMode;
     }
@@ -56,7 +55,9 @@ public class ConcertDisplayService {
     private String generateCardHTML() {
         Scanner sc;
         try {
-            sc = new Scanner(new File("concerttracker/persistence/cardViewLayout.txt"));
+            Path path = Paths.get("ConcertDisplayService.java").toAbsolutePath().getParent();
+            path = path.resolve("concerttracker/persistence/cardViewLayout.txt");
+            sc = new Scanner(path.toFile());
         }
         catch(Exception e){
             return "<p>Error, could not load data<p>\n";
@@ -87,9 +88,11 @@ public class ConcertDisplayService {
     private String generateListHTML() {
         Scanner sc;
         try {
-            sc = new Scanner(new File("concerttracker/persistence/listViewLayout.txt"));
+            Path path = Paths.get("ConcertDisplayService.java").toAbsolutePath().getParent();
+            path = path.resolve("concerttracker/persistence/listViewLayout.txt");
+            sc = new Scanner(path.toFile());
         }
-        catch(Exception e){
+        catch(Exception e) {
             return "<p>Error, could not load data<p>\n";
         }
         
@@ -132,6 +135,11 @@ public class ConcertDisplayService {
         else {
             setViewMode("LIST");
         }
+    }
+    
+    /* Gets the current concert view mode */
+    public String getViewMode(){
+        return concertViewMode;
     }
     
     /* Sets the current concert view mode */
