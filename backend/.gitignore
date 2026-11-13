@@ -1,0 +1,3 @@
+# Build output and the local database (rebuilt from schema.sql on every start)
+target/
+concerts.db

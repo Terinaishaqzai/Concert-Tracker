@@ -1,0 +1,77 @@
+@startuml search-detailed-class
+' Detailed class diagram: Concert Search (solution level, three layers)
+title Concert Search - Detailed Class Diagram
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+allowmixing
+
+package "UI Layer" {
+  class SearchBar <<HTML/JS>> {
+    + onSearch(query: String): void
+    + renderResults(concerts: List<Concert>): void
+  }
+}
+
+package "Application Layer" {
+  class ConcertSearchController {
+    - service: ConcertSearchService
+    + ConcertSearchController(service: ConcertSearchService)
+    + handleSearch(exchange: HttpExchange): void
+    - readQueryParam(exchange: HttpExchange, name: String): String
+    - toJson(concerts: List<Concert>): String
+  }
+
+  class ConcertSearchService {
+    + PRICE_UNAVAILABLE: String {static}
+    - repo: ConcertRepository
+    + ConcertSearchService(repo: ConcertRepository)
+    + search(query: String): List<Concert>
+    - isUpcoming(c: Concert): boolean
+    - matches(c: Concert, q: String): boolean
+    - withPriceLabel(c: Concert): Concert
+  }
+
+  class Concert {
+    - id: int
+    - name: String
+    - genre: String
+    - venue: String
+    - city: String
+    - date: LocalDate
+    - priceRange: String
+    - seatRating: String
+    - ticketUrl: String
+    + getId(): int
+    + getName(): String
+    + getGenre(): String
+    + getVenue(): String
+    + getCity(): String
+    + getDate(): LocalDate
+    + getPriceRange(): String
+    + getSeatRating(): String
+    + getTicketUrl(): String
+  }
+}
+
+package "Persistence Layer" {
+  interface ConcertRepository {
+    + findAll(): List<Concert>
+  }
+
+  class SqliteConcertRepository {
+    - dbUrl: String
+    + SqliteConcertRepository(dbUrl: String)
+    + findAll(): List<Concert>
+  }
+
+  database "concerts.db" as DB
+}
+
+SearchBar ..> ConcertSearchController : HTTP GET /api/concerts/search?q=
+ConcertSearchController --> ConcertSearchService
+ConcertSearchService --> ConcertRepository
+ConcertRepository <|.. SqliteConcertRepository
+SqliteConcertRepository ..> DB : JDBC
+ConcertSearchService ..> Concert : returns
+SqliteConcertRepository ..> Concert : creates
+@enduml

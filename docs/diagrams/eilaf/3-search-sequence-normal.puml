@@ -1,0 +1,36 @@
+@startuml search-sequence-normal
+' Sequence diagram: user searches for a keyword that has matches
+title Concert Search - Normal Search ("drake")
+autonumber
+
+actor User
+participant "SearchBar\n(index.html)" as UI
+participant ConcertSearchController as Ctrl
+participant ConcertSearchService as Svc
+participant "ConcertRepository\n(SqliteConcertRepository)" as Repo
+database "concerts.db" as DB
+
+User -> UI : types "drake", presses Enter
+UI -> Ctrl : GET /api/concerts/search?q=drake
+activate Ctrl
+Ctrl -> Svc : search("drake")
+activate Svc
+Svc -> Repo : findAll()
+activate Repo
+Repo -> DB : SELECT * FROM concerts
+DB --> Repo : rows
+Repo --> Svc : List<Concert>
+deactivate Repo
+loop for each Concert c
+  Svc -> Svc : isUpcoming(c)
+  Svc -> Svc : matches(c, "drake")
+  Svc -> Svc : withPriceLabel(c) [if both true]
+end
+Svc -> Svc : sort results by date
+Svc --> Ctrl : matching List<Concert>
+deactivate Svc
+Ctrl --> UI : 200 OK (JSON)
+deactivate Ctrl
+UI -> UI : renderResults(concerts)
+UI --> User : shows matching concert cards
+@enduml
