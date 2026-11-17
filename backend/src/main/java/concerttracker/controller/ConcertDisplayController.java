@@ -34,7 +34,13 @@ public class ConcertDisplayController {
         displayService.toggleViewMode();
         
         String newConcertViewMode = displayService.getViewMode();
-        byte[] body = newConcertViewMode.getBytes();
+        sendString(exchange, 201, newConcertViewMode); 
+    }
+
+    /* Sends a string (text) back to the client */
+    private void sendText(HttpExchange exchange, int status, String text){
+        byte[] body = text.getBytes(StandardCharsets.UTF_8);
+        exchange.sendResponseHeaders(201, body.length);
         OutputStream out = exchange.getResponseBody();
         out.write(body);
         out.close();

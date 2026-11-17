@@ -319,14 +319,16 @@ Quick View and cards display the same server results.
         }
       }
 
-      function changeView(){
+      function changeView(viewmode){
         switch (viewmode) {
           case "CARD":
             table.style.display = "none";
             cards.style.display = "block";
+            break;
           case "LIST":
             table.style.display = "block";
             cards.style.display = "none";
+            break;
           default:
             table.style.display = "none";
             cards.style.display = "block";
